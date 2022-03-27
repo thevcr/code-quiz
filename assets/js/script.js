@@ -1,7 +1,10 @@
 var timerEl = document.querySelector('.countdown');
 var mainEl = document.querySelector('.page-content');
-var questions = [];
 
+var answersArrOne =  ["strings","booleans","alerts","numbers"];
+//quotes, curly brackets, parenthesis, square brackets
+//
+var questionsArr = ["Commonly used data types DO NOT include:", "The condition in an if/else statement is enclosed with:", "Arrays in JavaScript can be used to store:", "A useful tool used during development and debugging for printing content to the debugger is:", "String values must be enclosed within _____ when assigning a variable"];
 var questionCount = 0;
 var answerCount = 0;
 
@@ -32,27 +35,19 @@ var startButtonHandler = function (event) {
   
     if (targetEl.matches("#start-btn")) {
         removeStarterText();
+        startQuiz();
     }
-    startQuiz();
 };
   
 // Displays the quiz question one at a time
 function startQuiz() {
     countdown();
     generateQuestions();
-    // Uses the `setInterval()` method to call a function to be executed every 1000 milliseconds
-    // var questionInterval = setInterval(function () {
-    // // If there are no more words left in the message
-    // if (questions[questionCount] === undefined) {
-    //     // Use `clearInterval()` to stop the timer
-    //     clearInterval(questionInterval);
-    //   } else {
-    //     // Display one word of the message
+    // for (i=0; i<questionsArr1.length; i++) {
     //     generateQuestions();
-    //     mainEl.textContent = question[questionCount];
-    //     questionCount++;
-    //   }
-    // }, 1000);
+    // }
+    //Uses the `setInterval()` method to call a function to be executed every 1000 milliseconds
+    
 };
 
 var removeStarterText = function() {
@@ -73,27 +68,36 @@ var generateQuestions = function() {
 
     var questionTextEl = document.createElement("h1");
     questionTextEl.className = "question-text";
-    questionTextEl.textContent = "Commonly used data types DO NOT include:";
+
+    var questionInterval = setInterval(function () {
+        // If there are no more words left in the message
+        if (questionsArr[questionCount] === undefined) {
+            // Use `clearInterval()` to stop the timer
+            clearInterval(questionInterval);
+          } else {
+            // Ask next question
+            questionTextEl.textContent = questionsArr[questionCount];
+            questionCount++;
+          } 
+    }); 
     questionContainerEl.appendChild(questionTextEl)
 
     var answerList = document.createElement("ul");
     answerList.className = "answer-list";
     questionContainerEl.appendChild(answerList);
 
-    
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < answersArrOne.length; i++) {
         // create answer buttons
         var answerListItem = document.createElement("li");
         answerListItem.classname = "answer-list-item";
 
         var answerButtonEl = document.createElement("button");
-        answerButtonEl.textContent = "";
+        answerButtonEl.textContent = answersArrOne[i];
         answerButtonEl.className = "btn answer-btn";
 
         answerList.appendChild(answerListItem)
         answerListItem.appendChild(answerButtonEl);
     };
 };
-
 
 mainEl.addEventListener("click", startButtonHandler);

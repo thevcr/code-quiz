@@ -13,7 +13,6 @@ div {
     display: flex;
     flex-flow: column wrap;
     align-content: flex-start;
-    margin: 0 305px;
 }
 
 .container {
@@ -22,6 +21,7 @@ div {
 }
 .page-content {
     text-align: center;
+    margin: 0 300px;
 }
 
 .btn {
@@ -29,6 +29,7 @@ div {
     background-color: rgb(75, 0, 75);
     border: 4px solid rgb(75, 0, 75);
     border-radius: 4px;
+    width: 100px;
 }
 .btn:hover {
     background-color: rgb(180, 0, 180);
