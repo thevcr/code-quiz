@@ -1,37 +1,38 @@
 var timerEl = document.querySelector('.countdown');
 var mainEl = document.querySelector('.page-content');
-var answerId = mainEl.getAttribute("correct-answer-btn");
+var startBtnEl = document.getElementById('start-btn');
+
 var questionCount = 0;
-var answerCount = 0;
 var questionEl;
 var answersEl;
 var answersListItemEl;
 var answerBtnEl;
 var timeLeft;
+var timeInterval;
 
 // questions and answers object array
 var questions = [
-questionOne = {
+this.questionOne = {
     question: "Commonly used data types DO NOT include:",
     answers: ["strings","booleans","alerts","numbers"],
     correctAnswerIndex: 2
 },
-questionTwo = {
+this.questionTwo = {
     question: "The condition in an if/else statement is enclosed with:",
     answers: ["curly brackets", "square brackets", "quotation marks", "parenthesis"],
     correctAnswerIndex: 0
 },
-questionThree = {
+this.questionThree = {
     question: "Arrays in JavaScript can be used to store:",
     answers: ["numbers and strings", "other arrays", "booleans", "all of the above"],
     correctAnswerIndex: 3
 },
-questionFour = {
+this.questionFour = {
     question: "A useful tool used during development and debugging for printing content to the debugger is:",
     answers: ["JavaScript", "terminal/bash", "for loops", "console.log"],
     correctAnswerIndex: 3
 },
-questionFive= {
+this.questionFive= {
     question: "String values must be enclosed within _____ when assigning a variable",
     answers: ["commas", "curly brackets", "quotation marks", "parenthesis"],
     correctAnswerIndex: 2
@@ -40,10 +41,9 @@ questionFive= {
 
 // Timer that counts down from 75
 function countdown() {
-    timeLeft = 85;
-  
+    timeLeft = 75;
     // Use the `setInterval()` method to call a function to be executed every 1000 milliseconds
-    var timeInterval = setInterval(function () {
+    timeInterval = setInterval(function () {
         // As long as the `timeLeft` is greater than 1
         if (timeLeft >= 1 && timeLeft <= 75) {
             // Set the `textContent` of `timerEl` to show the remaining seconds
@@ -59,44 +59,24 @@ function countdown() {
     }, 1000);
 };
 
-
 var startButtonHandler = function (event) {
     event.preventDefault();
-    // Get target element from event
-    var targetEl = event.target;
-  
-    if (targetEl.matches("#start-btn")) {
-        removeStarterText();
-        startQuiz();
-    }
+
+    while (mainEl.firstChild) {
+        mainEl.removeChild(mainEl.firstChild)
+    };
+    startQuiz();
 };
   
 // Displays the quiz question one at a time
 function startQuiz() {
     countdown();
-    generateElementContainers();
-    generateInitialQuestion();
-    generateInitialAnswers();
-};
-
-// remove quiz text and button after clicking start quiz
-var removeStarterText = function() {
-    var startTitleEl = document.querySelector("#start-title");
-    startTitleEl.remove();
-
-    var startTextEl = document.querySelector("#start-text");
-    startTextEl.remove();
-
-    var startBtnEl = document.querySelector("#start-btn");
-    startBtnEl.remove();
-};
-
-var generateInitialQuestion = function() {
-    questionEl = document.querySelector(".question-text");
+    generateAdditionalQuestions();
+    generateAdditionalAnswers();
 };
 
 var generateElementContainers = function() {
-        // create question text container
+        // create questions container
         var questionContainerEl = document.createElement("div");
         questionContainerEl.className = "questions-container";
         mainEl.appendChild(questionContainerEl);
@@ -111,6 +91,7 @@ var generateElementContainers = function() {
         answerList.className = "answer-list";
         questionContainerEl.appendChild(answerList);
 };
+
 
 var generateInitialAnswers = function() {
     answersEl = document.querySelector(".answer-list");
@@ -132,6 +113,10 @@ var generateInitialAnswers = function() {
 }
 
 var generateAdditionalQuestions = function() {
+    if (!answersEl) {
+        generateElementContainers();
+    }
+    questionEl = document.querySelector(".question-text");
     if (questions[questionCount] === undefined) {
         endQuiz();
     }
@@ -139,6 +124,9 @@ var generateAdditionalQuestions = function() {
 };
 
 var generateAdditionalAnswers = function() {
+    if (!answersEl) {
+        generateInitialAnswers();
+    }
     answerBtnEl = document.querySelectorAll(".answer-btn", i);
 
     for (i=0; i<answerBtnEl.length; i++) {
@@ -148,6 +136,8 @@ var generateAdditionalAnswers = function() {
 
         if (questions[questionCount].answers.indexOf(questions[questionCount].answers[i]) === questions[questionCount].correctAnswerIndex) {
             answerBtnEl[i].setAttribute("id", "correct-answer-btn");
+        } else {
+            answerBtnEl[i].setAttribute("id", "answer-btn");
         }
     }
     questionCount++;
@@ -165,11 +155,13 @@ var endQuiz = function() {
 
     var finalScore = document.createElement("p");
     finalScore.textContent = "Your final score is: " + timeLeft;
+    timerEl.textContent = '';
+    clearInterval(timeInterval);
 
     var initialInputLabel = document.createElement("label");
     initialInputLabel.className = "initial-input";
     initialInputLabel.setAttribute("for", "initials");
-    initialInputLabel.textContent = "Enter initials: "
+    initialInputLabel.textContent = "Enter initials: ";
 
     var initialInput = document.createElement("input");
     initialInput.className = "initial-input";
@@ -188,31 +180,32 @@ var endQuiz = function() {
     initialInputContainer.appendChild(initialSubmitBtn);
 }
 
-var correctAnswerButtonHandler = function (event) {
-    var targetEl = event.target;
+// adding answer btn selection check
+function hasCorrectId(elem, idName) {
+    return elem.matches(idName);
+}
 
-    if (targetEl.matches("#correct-answer-btn")) {
-        generateAdditionalQuestions();
-        generateAdditionalAnswers();
-    } else {
-        timeLeft -= 10;
+var correctAnswerButtonHandler = function () {
+    // only run if answer btn element is generated
+    if (answerBtnEl) {
         generateAdditionalQuestions();
         generateAdditionalAnswers();
     }
 };
 
-// var incorrectAnswerButtonHandler = function (event) {
-//     var targetEl = event.target;
+var incorrectAnswerButtonHandler = function () {
+    // only run if answer btn element is generated
+    timeLeft -= 10;
+    generateAdditionalQuestions();
+    generateAdditionalAnswers();
+};
 
-//     if (targetEl.matches(".answer-btn")) {
-//         timeLeft -= 10;
-//         generateAdditionalQuestions();
-//         generateAdditionalAnswers();
-//     }
-// };
-
-
-mainEl.addEventListener("click", startButtonHandler);
-mainEl.addEventListener("click", correctAnswerButtonHandler);
-//mainEl.addEventListener("click", incorrectAnswerButtonHandler);
+startBtnEl.addEventListener("click", startButtonHandler);
+mainEl.addEventListener("click", function (e) {
+    if (hasCorrectId(e.target, '#correct-answer-btn')) {
+        correctAnswerButtonHandler();
+    } else if (hasCorrectId(e.target, '#answer-btn')) {
+        incorrectAnswerButtonHandler();
+    }
+}, false);
 
